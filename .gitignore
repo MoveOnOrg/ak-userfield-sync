@@ -1,5 +1,4 @@
 venv
 *.pyc
-*.sql
 settings.py
 zappa_settings.yaml
