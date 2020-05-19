@@ -30,7 +30,7 @@ class Test():
         Test.monkeypatch.setattr("sync.get_rows", self.mock_get_rows)
         Test.monkeypatch.setattr("actionkit.api.user.AKUserAPI.set_usertag", self.mock_set_usertag)
         # All the connection and SQL values are being mocked. Only SQL_COLUMNS
-        # and AK_USEFIELDS are actually used in tests.
+        # and AK_USERFIELDS are actually used in tests.
         args = {
             'AK_BASEURL': 'mock',
             'AK_USER': 'mock',
@@ -43,7 +43,7 @@ class Test():
             'SQL_FILE': 'mock',
             'SQL_LIMIT': 'mock',
             'SQL_COLUMNS': 'columntest',
-            'AK_USEFIELDS': 'fieldtest'
+            'AK_USERFIELDS': 'fieldtest'
         }
         args = Struct(**args)
         sync.sync(args)
