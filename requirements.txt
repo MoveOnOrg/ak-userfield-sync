@@ -1,0 +1,3 @@
+psycopg2-binary==2.8.3
+-e git://github.com/MoveOnOrg/python-actionkit@public-master#egg=python-actionkit
+git+https://github.com/sreynen/pywell@main#egg=pywell
