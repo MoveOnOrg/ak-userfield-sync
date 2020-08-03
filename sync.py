@@ -38,7 +38,7 @@ def get_rows(args):
     )
     with open(args.SQL_FILE, 'r') as file:
         query = file.read()
-    query += ' LIMIT %d' % args.SQL_LIMIT
+    query += ' LIMIT %d' % int(args.SQL_LIMIT)
     database_cursor.execute(query)
     return [dict(row) for row in database_cursor.fetchall()]
 
