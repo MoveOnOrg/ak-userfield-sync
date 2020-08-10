@@ -17,6 +17,7 @@ ARG_DEFINITIONS = {
     'SQL_FILE': 'Path to SQL file.',
     'SQL_LIMIT': 'How many records to process each run.',
     'SQL_COLUMNS': 'Comma-separated list off column names to sync.',
+    'SQL_LIST_COLUMNS': 'Comma-separted list of column names that have values that are also comma-separated lists.',
     'AK_USERFIELDS': 'Comma-separted list of usefield names, in same order as mapped SQL_COLUMNS.'
 }
 
@@ -47,14 +48,22 @@ def sync(args):
     ak_user_api = AKUserAPI(args)
     rows = get_rows(args)
     columns = args.SQL_COLUMNS.split(',')
+    if 'SQL_LIST_COLUMNS' in args.__dict__:
+        list_columns = args.SQL_LIST_COLUMNS.split(',')
+    else:
+        list_columns = []
     userfields = args.AK_USERFIELDS.split(',')
+    results = []
     for row in rows:
-        key_values = {
-            key : row.get(columns[index], '')
-            for index, key in enumerate(userfields)
-        }
+        key_values = {}
+        for index, key in enumerate(userfields):
+            column = columns[index]
+            key_values[key] = row.get(column, '').encode('latin-1', 'ignore').decode('latin-1')
+            if column in list_columns:
+                key_values[key] = key_values[key].split(',')
+        results.append((row.get('user_id'), key_values))
         ak_user_api.set_usertag(row.get('user_id'), key_values)
-    return rows
+    return results
 
 
 def aws_lambda(event, context) -> str:
