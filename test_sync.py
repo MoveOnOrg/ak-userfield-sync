@@ -18,7 +18,7 @@ class Test():
     def mock_get_rows(self, args):
         return [
             {'user_id': 1, 'columntest': 'asdf'},
-            {'user_id': 2, 'columntest': 'qwerty', 'extra': 'nothing'}
+            {'user_id': 2, 'columntest': 'qwe,rty', 'extra': 'nothing'}
         ]
 
     # Mock calling ActionKit, record what would be sent.
@@ -31,7 +31,7 @@ class Test():
         Test.monkeypatch.setattr("actionkit.api.user.AKUserAPI.set_usertag", self.mock_set_usertag)
         # All the connection and SQL values are being mocked. Only SQL_COLUMNS
         # and AK_USERFIELDS are actually used in tests.
-        args = {
+        args_dict = {
             'AK_BASEURL': 'mock',
             'AK_USER': 'mock',
             'AK_PASSWORD': 'mock',
@@ -45,7 +45,14 @@ class Test():
             'SQL_COLUMNS': 'columntest',
             'AK_USERFIELDS': 'fieldtest'
         }
-        args = Struct(**args)
+        args = Struct(**args_dict)
         sync.sync(args)
         assert self.user_ids == [1, 2]
-        assert self.key_values == [{'fieldtest': 'asdf'}, {'fieldtest': 'qwerty'}]
+        assert self.key_values == [{'fieldtest': 'asdf'}, {'fieldtest': 'qwe,rty'}]
+        self.user_ids = []
+        self.key_values = []
+        args_dict['SQL_LIST_COLUMNS'] = 'columntest'
+        args = Struct(**args_dict)
+        sync.sync(args)
+        assert self.user_ids == [1, 2]
+        assert self.key_values == [{'fieldtest': ['asdf']}, {'fieldtest': ['qwe','rty']}]
